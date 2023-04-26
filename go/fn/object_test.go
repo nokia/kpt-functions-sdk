@@ -471,6 +471,12 @@ func TestGetNestedFields(t *testing.T) {
 	if stringSliceVal, _, _ := deployment.NestedStringSlice("spec", "fakeStringSlice"); !reflect.DeepEqual(stringSliceVal, []string{"test1", "test2"}) {
 		t.Errorf("deployment .spec.fakeStringSlice expected to get [`test1`, `test2`], got %v", stringSliceVal)
 	}
+
+	strategy, _, _ := deployment.NestedSubObject("spec", "strategy")
+	if stringVal := strategy.GetString("type"); stringVal != "Recreate" {
+		t.Errorf("deployment .spec.strategy.type expected to be `Recreate`, got %v", stringVal)
+	}
+
 	// Style 2, get each struct layer by type.
 	spec := deployment.GetMap("spec")
 	if intVal := spec.GetInt("replicas"); intVal != 3 {
