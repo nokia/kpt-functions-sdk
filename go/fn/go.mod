@@ -1,4 +1,4 @@
-module github.com/GoogleContainerTools/kpt-functions-sdk/go/fn
+module github.com/nokia/kpt-functions-sdk/go/fn
 
 go 1.18
 
