@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	v1 "github.com/GoogleContainerTools/kpt-functions-sdk/go/api/kptfile/v1"
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn/internal"
+	"github.com/nokia/kpt-functions-sdk/go/fn/internal"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/kustomize/kyaml/kio/kioutil"
 	"sigs.k8s.io/kustomize/kyaml/yaml"
@@ -839,7 +839,6 @@ func (o *SubObject) UpsertMap(k string) *SubObject {
 	m := o.obj.UpsertMap(k)
 	return &SubObject{obj: m, parentGVK: o.parentGVK, fieldpath: o.fieldpath + "." + k}
 }
-
 
 // SetMap  accepts a single key `k`, and ensures that the value of `k` is the same as the map it received
 // via `mapObject` in the form of a SubObject pointer.
