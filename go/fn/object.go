@@ -840,6 +840,13 @@ func (o *SubObject) UpsertMap(k string) *SubObject {
 	return &SubObject{obj: m, parentGVK: o.parentGVK, fieldpath: o.fieldpath + "." + k}
 }
 
+
+// SetMap  accepts a single key `k`, and ensures that the value of `k` is the same as the map it received
+// via `mapObject` in the form of a SubObject pointer.
+func (o *SubObject) SetMap(mapObj *SubObject, k string) error {
+	return o.obj.SetNestedMap(mapObj.obj, k)
+}
+
 // GetMap accepts a single key `k` whose value is expected to be a map. It returns
 // the map in the form of a SubObject pointer.
 // It panic with ErrSubObjectFields error if the field cannot be represented as a SubObject.
