@@ -7,7 +7,7 @@ replace github.com/nokia/kpt-functions-sdk/go/api => ../api
 require (
 	github.com/go-errors/errors v1.0.1
 	github.com/google/go-cmp v0.5.9
-	github.com/nokia/kpt-functions-sdk/go/api v0.0.0-20220720212527-133180134b93
+	github.com/nokia/kpt-functions-sdk/go/api v0.0.0-20231013184315-4f0d609b0118
 	github.com/stretchr/testify v1.8.0
 	k8s.io/apimachinery v0.24.0
 	// We must not include any core k8s APIs (e.g. k8s.io/api) in
