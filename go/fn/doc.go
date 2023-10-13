@@ -72,6 +72,6 @@ handles the ResourceList parsing, KRM resource field type detection, read from S
 
 "AsMain" accepts a struct that either implement the ResourceListProcessor interface or Runner interface.
 
-See github.com/GoogleContainerTools/kpt-functions-sdk/go/fn/examples for detailed usage.
+See github.com/nokia/kpt-functions-sdk/go/fn/examples for detailed usage.
 */
 package fn

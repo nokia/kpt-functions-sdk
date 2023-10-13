@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+	"github.com/nokia/kpt-functions-sdk/go/fn"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

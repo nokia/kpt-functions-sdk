@@ -20,7 +20,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	yaml2 "sigs.k8s.io/kustomize/kyaml/yaml"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+	"github.com/nokia/kpt-functions-sdk/go/fn"
 )
 
 // In this example, we implement a function that injects a logger as a sidecar

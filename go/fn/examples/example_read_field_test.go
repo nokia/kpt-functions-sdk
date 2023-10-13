@@ -17,7 +17,7 @@ package example
 import (
 	"os"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+	"github.com/nokia/kpt-functions-sdk/go/fn"
 )
 
 // In this example, we read a field from the input object and print it to the log.

@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	v1 "github.com/GoogleContainerTools/kpt-functions-sdk/go/api/kptfile/v1"
+	v1 "github.com/nokia/kpt-functions-sdk/go/api/kptfile/v1"
 	"github.com/nokia/kpt-functions-sdk/go/fn/internal"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/kustomize/kyaml/kio/kioutil"

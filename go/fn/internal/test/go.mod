@@ -1,11 +1,11 @@
-module github.com/GoogleContainerTools/kpt-functions-sdk/go/fn/internal_test
+module github.com/nokia/kpt-functions-sdk/go/fn/internal_test
 
 go 1.18
 
-replace github.com/GoogleContainerTools/kpt-functions-sdk/go/fn v0.0.0 => ../..
+replace github.com/nokia/kpt-functions-sdk/go/fn v0.0.0 => ../..
 
 require (
-	github.com/GoogleContainerTools/kpt-functions-sdk/go/fn v0.0.0
+	github.com/nokia/kpt-functions-sdk/go/fn v0.0.0
 	github.com/stretchr/testify v1.8.0
 	k8s.io/api v0.24.0
 	k8s.io/apimachinery v0.24.0
@@ -13,7 +13,7 @@ require (
 )
 
 require (
-	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20220720212527-133180134b93 // indirect
+	github.com/nokia/kpt-functions-sdk/go/api v0.0.0-20220720212527-133180134b93 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

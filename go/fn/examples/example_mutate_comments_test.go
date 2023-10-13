@@ -18,7 +18,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+	"github.com/nokia/kpt-functions-sdk/go/fn"
 )
 
 // In this example, we mutate line comments for field metadata.name.
