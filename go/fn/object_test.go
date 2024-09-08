@@ -854,3 +854,84 @@ metadata:
 		t.Fatalf("unexpected result from GroupVersionKind(); got %v; want %v", got, want)
 	}
 }
+
+func TestRNodeInteroperability(t *testing.T) {
+	input := []byte(`
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-app
+  namespace: my-ns
+`)
+
+	var found bool
+	ko, err := ParseKubeObject(input)
+	if err != nil {
+		t.Fatalf("failed to parse object: %v", err)
+	}
+
+	rn := ko.CopyToResourceNode()
+	assert.Equal(t, "apps/v1", ko.GetAPIVersion())
+	assert.Equal(t, "StatefulSet", ko.GetKind())
+	assert.Equal(t, "my-app", ko.GetName())
+	assert.Equal(t, "my-ns", ko.GetNamespace())
+	assert.Equal(t, "apps/v1", rn.GetApiVersion())
+	assert.Equal(t, "StatefulSet", rn.GetKind())
+	assert.Equal(t, "my-app", rn.GetName())
+	assert.Equal(t, "my-ns", rn.GetNamespace())
+
+	ko2 := NewKubeObjectFromResourceNode(rn)
+	assert.Equal(t, "apps/v1", rn.GetApiVersion())
+	assert.Equal(t, "StatefulSet", rn.GetKind())
+	assert.Equal(t, "my-app", rn.GetName())
+	assert.Equal(t, "my-ns", rn.GetNamespace())
+	assert.Equal(t, "apps/v1", ko2.GetAPIVersion())
+	assert.Equal(t, "StatefulSet", ko2.GetKind())
+	assert.Equal(t, "my-app", ko2.GetName())
+	assert.Equal(t, "my-ns", ko2.GetNamespace())
+
+	rn2 := ko2.MoveToResourceNode()
+	_, found, _ = ko2.NestedString("apiVersion")
+	assert.False(t, found)
+	_, found, _ = ko2.NestedString("kind")
+	assert.False(t, found)
+	_, found, _ = ko2.NestedString("metadata", "name")
+	assert.False(t, found)
+	_, found, _ = ko2.NestedString("metadata", "namespace")
+	assert.False(t, found)
+	assert.Equal(t, "apps/v1", rn2.GetApiVersion())
+	assert.Equal(t, "StatefulSet", rn2.GetKind())
+	assert.Equal(t, "my-app", rn2.GetName())
+	assert.Equal(t, "my-ns", rn2.GetNamespace())
+
+	ko2 = MoveToKubeObject(rn2)
+	assert.Equal(t, "apps/v1", ko2.GetAPIVersion())
+	assert.Equal(t, "StatefulSet", ko2.GetKind())
+	assert.Equal(t, "my-app", ko2.GetName())
+	assert.Equal(t, "my-ns", ko2.GetNamespace())
+	assert.Empty(t, rn2.GetApiVersion())
+	assert.Empty(t, rn2.GetKind())
+	assert.Empty(t, rn2.GetName())
+	assert.Empty(t, rn2.GetNamespace())
+}
+
+func TestDeepCopy(t *testing.T) {
+	input := []byte(`
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-app
+  namespace: my-ns
+`)
+
+	orig, err := ParseKubeObject(input)
+	if err != nil {
+		t.Fatalf("failed to parse object: %v", err)
+	}
+
+	copy := orig.Copy()
+	assert.Equal(t, orig.String(), copy.String())
+	copy.SetName("new-name")
+	assert.Equal(t, "my-app", orig.GetName())
+	assert.Equal(t, "new-name", copy.GetName())
+}

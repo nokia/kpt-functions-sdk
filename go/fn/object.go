@@ -828,6 +828,40 @@ func rnodeToKubeObject(rn *yaml.RNode) *KubeObject {
 	return asKubeObject(mapVariant)
 }
 
+// NewKubeObjectFromResourceNode creates a KubeObject from the deep copy of a yaml.RNode
+func NewKubeObjectFromResourceNode(rn *yaml.RNode) *KubeObject {
+	// create a deep copy of the RNode to avoid exposing internal state of the new KubeObject
+	return rnodeToKubeObject(rn.Copy())
+}
+
+// CopyToResourceNode returns a deep copy of the KubeObject's internal yaml.RNode
+func (o *KubeObject) CopyToResourceNode() *yaml.RNode {
+	return yaml.NewRNode(o.obj.Node()).Copy()
+}
+
+// MoveToResourceNode transfers the ownership of the internal yaml nodes of the KubeObject
+// into a new yaml.RNode, and leaves the original KubeObject empty.
+func (o *KubeObject) MoveToResourceNode() *yaml.RNode {
+	ynode := o.obj.Node()
+	o.SubObject = NewEmptyKubeObject().SubObject
+	return yaml.NewRNode(ynode)
+}
+
+// MoveToKubeObject transfers the ownership of the internal yaml nodes of the RNode
+// into a new KubeObject, and leaves the original RNode empty.
+func MoveToKubeObject(rn *yaml.RNode) *KubeObject {
+	ret := rnodeToKubeObject(rn)
+	*rn = *yaml.MakeNullNode()
+	return ret
+}
+
+// Copy returns a deep copy of the KubeObject
+func (o *KubeObject) Copy() *KubeObject {
+	ynode := yaml.CopyYNode(o.obj.Node())
+	mapVariant := internal.NewMap(ynode)
+	return &KubeObject{SubObject{parentGVK: o.parentGVK, obj: mapVariant, fieldpath: ""}}
+}
+
 // SubObject represents a map within a KubeObject
 type SubObject struct {
 	parentGVK schema.GroupVersionKind
