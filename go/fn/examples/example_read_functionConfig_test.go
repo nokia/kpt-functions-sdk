@@ -17,7 +17,7 @@ package example
 import (
 	"os"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+	"github.com/kptdev/krm-functions-sdk/go/fn"
 	yaml2 "sigs.k8s.io/kustomize/kyaml/yaml"
 )
 

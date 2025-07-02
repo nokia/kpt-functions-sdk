@@ -18,7 +18,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/kfn/commands"
+	"github.com/kptdev/krm-functions-sdk/go/kfn/commands"
 	"github.com/spf13/cobra"
 )
 

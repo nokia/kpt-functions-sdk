@@ -17,7 +17,7 @@ package example
 import (
 	"os"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+	"github.com/kptdev/krm-functions-sdk/go/fn"
 )
 
 // This example implements a function that selectively includes or excludes some resources.

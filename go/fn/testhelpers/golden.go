@@ -25,8 +25,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
 	"github.com/google/go-cmp/cmp"
+	"github.com/kptdev/krm-functions-sdk/go/fn"
 )
 
 // RunGoldenTests provides the test infra to run golden test.

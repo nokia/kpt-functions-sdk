@@ -14,7 +14,7 @@
 
 package example
 
-import "github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+import "github.com/kptdev/krm-functions-sdk/go/fn"
 
 const (
 	apps = "apps"

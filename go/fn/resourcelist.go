@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"sort"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn/internal"
+	"github.com/kptdev/krm-functions-sdk/go/fn/internal"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/kustomize/kyaml/kio"
 	"sigs.k8s.io/kustomize/kyaml/yaml"
@@ -137,7 +137,7 @@ func (rl *ResourceList) toYNode() (*yaml.Node, error) {
 		return nil, err
 	}
 
-	if rl.Items != nil && len(rl.Items) > 0 {
+	if len(rl.Items) > 0 {
 		itemsSlice := internal.NewSliceVariant()
 		for i := range rl.Items {
 			itemsSlice.Add(rl.Items[i].node())
@@ -152,7 +152,7 @@ func (rl *ResourceList) toYNode() (*yaml.Node, error) {
 		}
 	}
 
-	if rl.Results != nil && len(rl.Results) > 0 {
+	if len(rl.Results) > 0 {
 		resultsSlice := internal.NewSliceVariant()
 		for _, result := range rl.Results {
 			mv, err := internal.TypedObjectToMapVariant(result)

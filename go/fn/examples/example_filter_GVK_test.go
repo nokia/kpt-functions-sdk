@@ -17,7 +17,7 @@ package example_test
 import (
 	"os"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
+	"github.com/kptdev/krm-functions-sdk/go/fn"
 )
 
 // This example implements a function that updates the replicas field for all deployments.

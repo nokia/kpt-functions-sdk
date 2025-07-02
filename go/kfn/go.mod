@@ -1,4 +1,4 @@
-module github.com/GoogleContainerTools/kpt-functions-sdk/go/kfn
+module github.com/kptdev/krm-functions-sdk/go/kfn
 
 go 1.19
 

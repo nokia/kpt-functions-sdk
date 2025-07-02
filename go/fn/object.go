@@ -21,8 +21,8 @@ import (
 	"strconv"
 	"strings"
 
-	v1 "github.com/GoogleContainerTools/kpt-functions-sdk/go/api/kptfile/v1"
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn/internal"
+	v1 "github.com/kptdev/kpt/pkg/api/kptfile/v1"
+	"github.com/kptdev/krm-functions-sdk/go/fn/internal"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/kustomize/kyaml/kio/kioutil"
 	"sigs.k8s.io/kustomize/kyaml/yaml"
