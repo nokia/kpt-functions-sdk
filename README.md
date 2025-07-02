@@ -6,7 +6,7 @@ An opinionated Typescript SDK for implementing KRM functions.
 
 ## Documentation
 
-[Documentation](https://kpt.dev/book/05-developing-functions/03-developing-in-Typescript)
+[Documentation](https://kpt.dev/book/05-developing-functions/02-developing-in-Go)
 
 ## Issues
 
