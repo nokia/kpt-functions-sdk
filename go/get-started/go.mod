@@ -1,11 +1,11 @@
-module github.com/GoogleContainerTools/kpt-functions-sdk/go/get-started
+module github.com/kptdev/krm-functions-sdk/go/get-started
 
 go 1.19
 
-require github.com/GoogleContainerTools/kpt-functions-sdk/go/fn v0.0.0-20221018174030-e63010a12b00
+require github.com/kptdev/krm-functions-sdk/go/fn v0.1.0
 
 require (
-	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20221018174030-e63010a12b00 // indirect
+	github.com/kptdev/krm-functions-sdk/go/api v0.0.0-20221018174030-e63010a12b00 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect

@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2022 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn"
-	"github.com/GoogleContainerTools/kpt-functions-sdk/go/fn/testhelpers"
+	"github.com/kptdev/krm-functions-sdk/go/fn"
+	"github.com/kptdev/krm-functions-sdk/go/fn/testhelpers"
 )
 
 const TestDataPath = "testdata"
