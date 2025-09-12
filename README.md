@@ -2,11 +2,11 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkptdev%2Fkrm-functions-sdk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkptdev%2Fkrm-functions-sdk?ref=badge_shield)
 
 
-An opinionated Typescript SDK for implementing KRM functions.
+An opinionated Go SDK for implementing KRM functions.
 
 ## Documentation
 
-[Documentation](https://kpt.dev/book/05-developing-functions/02-developing-in-Go)
+[Documentation](https://kpt.dev/book/05-developing-functions/#developing-in-go)
 
 ## Issues
 
