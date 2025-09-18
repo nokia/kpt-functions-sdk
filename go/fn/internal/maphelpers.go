@@ -57,7 +57,7 @@ func (o *MapVariant) SetNestedValue(val variant, fields ...string) error {
 	var err error
 	for i := 0; i < n; i++ {
 		if i == n-1 {
-			current.set(fields[i], val)
+			current.setField(fields[i], val)
 		} else {
 			current, _, err = current.getMap(fields[i], true)
 			if err != nil {
@@ -180,19 +180,19 @@ func (o *MapVariant) SetNestedFloat(f float64, fields ...string) error {
 	return o.SetNestedValue(newFloatScalarVariant(f), fields...)
 }
 
-func (o *MapVariant) GetNestedSlice(fields ...string) (*sliceVariant, bool, error) {
+func (o *MapVariant) GetNestedSlice(fields ...string) (*SliceVariant, bool, error) {
 	node, found, err := o.GetNestedValue(fields...)
 	if err != nil || !found {
 		return nil, found, err
 	}
-	nodeS, ok := node.(*sliceVariant)
+	nodeS, ok := node.(*SliceVariant)
 	if !ok {
 		return nil, found, fmt.Errorf("incorrect type, was %T", node)
 	}
 	return nodeS, found, err
 }
 
-func (o *MapVariant) SetNestedSlice(s *sliceVariant, fields ...string) error {
+func (o *MapVariant) SetNestedSlice(s *SliceVariant, fields ...string) error {
 	return o.SetNestedValue(s, fields...)
 }
 
@@ -206,13 +206,13 @@ func (o *MapVariant) RemoveNestedField(fields ...string) (bool, error) {
 		}
 
 		if i == n-1 {
-			return current.remove(fields[i])
+			return current.remove(fields[i]), nil
 		}
 		switch entry := entry.(type) {
 		case *MapVariant:
 			current = entry
 		default:
-			return false, fmt.Errorf("value is of unexpected type %T", entry)
+			return false, fmt.Errorf("removeNestedField: value is expected to be map, but is of unexpected type %T", entry)
 		}
 	}
 	return false, fmt.Errorf("unexpected code reached")

@@ -111,13 +111,25 @@ func ParseResourceList(in []byte) (*ResourceList, error) {
 	}
 
 	// Parse Results. Results can be empty.
-	res, found, err := rlObj.obj.GetNestedSlice("results")
+	res, found, err := rlObj.obj.GetNestedValue("results")
 	if err != nil {
-		return nil, fmt.Errorf("failed when tried to get results: %w", err)
+		return nil, fmt.Errorf("failed when trying to get results: %w", err)
 	}
+
+	var resultsItems *internal.SliceVariant
+	// compatibility between kyaml versions
+	if m, ok := res.(*internal.MapVariant); ok {
+		resultsItems, found, err = m.GetNestedSlice("items")
+	} else if resultsItems, ok = res.(*internal.SliceVariant); !ok {
+		// no results
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed when trying to get results: %w", err)
+	}
+
 	if found {
 		var results Results
-		err = res.Node().Decode(&results)
+		err = resultsItems.Node().Decode(&results)
 		if err != nil {
 			return nil, fmt.Errorf("failed to decode results: %w", err)
 		}
