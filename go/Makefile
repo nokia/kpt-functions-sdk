@@ -1,5 +1,5 @@
 .PHONY: all
-all: fix vet fmt test lint license
+all: fix vet fmt test lint
 
 GOPATH := $(shell go env GOPATH)
 GOBIN := $(shell go env GOPATH)/bin
@@ -23,7 +23,7 @@ fmt: $(MODULES)
 lint: $(MODULES)
 	@for f in $(^D); do \
 	(cd $$f; echo "Checking golangci-lint $$f"; \
-	(which $(GOPATH)/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1); \
+	(which $(GOPATH)/bin/golangci-lint || go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.4.0); \
 	$(GOPATH)/bin/golangci-lint run ./...); \
 	done
 
@@ -35,6 +35,3 @@ test: $(MODULES)
 vet: $(MODULES)
 	@#for f in $(^D); do (cd $$f; echo "Checking $$f"; go run honnef.co/go/tools/cmd/staticcheck@latest ./...); done
 	@for f in $(^D); do (cd $$f; echo "Vetting $$f"; go vet ./...); done
-
-license:
-	GOBIN=$(GOBIN) hack/update-license.sh
