@@ -17,7 +17,7 @@ jobs:
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v5
     - name: Lint shell scripts, ignoring third-party files
       run: |
         find . -name "*.sh" | grep -v site | grep -v vendor | grep -v node_modules | grep -v demo/demo-magic > shell_files.out
@@ -32,14 +32,16 @@ jobs:
       GOPATH: /home/runner/work/krm-functions-sdk/go
       GO111MODULE: on
     steps:
-    - name: Set up Go 1.24
-      uses: actions/setup-go@v1
+    - name: Set up Go 1.24.7
+      uses: actions/setup-go@v6
       with:
-        go-version: 1.24
+        go-version: 1.24.7
       id: go
     - name: Check out code into GOPATH
-      uses: actions/checkout@v1
+      uses: actions/checkout@v5
       with:
         path: go/src/github.com/kptdev/krm-functions-sdk
     - name: Build, Test, Lint
-      run: hack/ci-validate-go.sh
+      run: |
+        cd go/src/github.com/kptdev/krm-functions-sdk
+        hack/ci-validate-go.sh
