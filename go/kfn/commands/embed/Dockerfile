@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.19-alpine3.15
+FROM golang:1.24-alpine3.22
 ENV CGO_ENABLED=0
 WORKDIR /go/src/
 COPY go.mod go.sum ./
