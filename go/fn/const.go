@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package fn
 
 const (
@@ -53,6 +54,7 @@ const (
 
 	// UnknownNamespace is the special char for cluster-scoped or unknown-scoped resources. This is only used in upstream-identifier
 	UnknownNamespace = "~C"
+
 	// DefaultNamespace is the actual namespace value if a namespace-scoped resource has its namespace field unspecified.
 	DefaultNamespace = "default"
 )
@@ -67,5 +69,5 @@ const (
 	KptFunctionVersion = "v1alpha1"
 	// KptFunctionGroup is the ApiVersion for the KRM resource which defines the configuration of a function execution.
 	// See KRM function specification `ResourceList.FunctionConfig`
-	KptFunctionApiVersion = KptFunctionGroup + "/" + KptFunctionVersion
+	KptFunctionAPIVersion = KptFunctionGroup + "/" + KptFunctionVersion
 )
