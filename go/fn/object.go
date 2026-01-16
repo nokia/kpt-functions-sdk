@@ -31,37 +31,6 @@ type KubeObject struct {
 	SubObject
 }
 
-// ParseKubeObjects parses input byte slice to multiple KubeObjects.
-func ParseKubeObjects(in []byte) ([]*KubeObject, error) {
-	doc, err := internal.ParseDoc(in)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse input bytes: %w", err)
-	}
-	objects, err := doc.Elements()
-	if err != nil {
-		return nil, fmt.Errorf("failed to extract objects: %w", err)
-	}
-	var kubeObjects []*KubeObject
-	for _, obj := range objects {
-		kubeObjects = append(kubeObjects, asKubeObject(obj))
-	}
-	return kubeObjects, nil
-}
-
-// ParseKubeObject parses input byte slice to a single KubeObject.
-func ParseKubeObject(in []byte) (*KubeObject, error) {
-	objects, err := ParseKubeObjects(in)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(objects) != 1 {
-		return nil, fmt.Errorf("expected exactly one object, got %d", len(objects))
-	}
-	obj := objects[0]
-	return obj, nil
-}
-
 // NestedBool returns the bool value, if the field exist and a potential error.
 func (o *SubObject) NestedBool(fields ...string) (bool, bool, error) {
 	b, found, err := o.obj.GetNestedBool(fields...)
@@ -482,6 +451,29 @@ func (o *KubeObject) resourceIdentifier() *yaml.ResourceIdentifier {
 	}
 }
 
+// PackageScopeUniqueID is a key that uniquely identifies a resource in a package,
+// even if there are multiple resources with the same GVKNN.
+type PackageScopeUniqueID struct {
+	yaml.ResourceIdentifier
+	Path  string
+	Index int
+}
+
+func (id PackageScopeUniqueID) String() string {
+	return fmt.Sprintf("%s|%s|%s|%s|%s:%d",
+		id.Kind, id.Name, id.Namespace, id.APIVersion, id.Path, id.Index)
+}
+
+// GetPackageScopeUniqueID returns with a key that uniquely identifies a resource in a package,
+// even if there are multiple resources with the same GVKNN.
+func (o *KubeObject) GetPackageScopeUniqueID() PackageScopeUniqueID {
+	return PackageScopeUniqueID{
+		ResourceIdentifier: *o.resourceIdentifier(),
+		Path:               o.PathAnnotation(),
+		Index:              o.IndexAnnotation(),
+	}
+}
+
 // GroupVersionKind returns the schema.GroupVersionKind for the specified object.
 func (o *KubeObject) GroupVersionKind() schema.GroupVersionKind {
 	gv, err := schema.ParseGroupVersion(o.GetAPIVersion())
@@ -574,6 +566,11 @@ func (o *KubeObject) SetName(name string) error {
 func (o *KubeObject) GetNamespace() string {
 	s, _, _ := o.obj.GetNestedString("metadata", "namespace")
 	return s
+}
+
+// GetGKNNString returns with Group, Kind, Namespace, Name in a human readable string
+func (o *KubeObject) GetGKNNString() string {
+	return fmt.Sprintf("%s/%s/%s", o.GroupKind().String(), o.GetNamespace(), o.GetName())
 }
 
 // IsNamespaceScoped tells whether a k8s resource is namespace scoped. If the KubeObject resource is a customized, it
@@ -694,11 +691,14 @@ func (o *KubeObject) HasLabels(labels map[string]string) bool {
 }
 
 func (o *KubeObject) PathAnnotation() string {
-	anno := o.GetAnnotation(kioutil.PathAnnotation)
-	return anno
+	return o.GetAnnotation(kioutil.PathAnnotation)
 }
 
-// IndexAnnotation return -1 if not found.
+func (o *KubeObject) SetPathAnnotation(path string) error {
+	return o.SetAnnotation(kioutil.PathAnnotation, path)
+}
+
+// IndexAnnotation returns -1 if not found.
 func (o *KubeObject) IndexAnnotation() int {
 	anno := o.GetAnnotation(kioutil.IndexAnnotation)
 	if anno == "" {
@@ -706,6 +706,10 @@ func (o *KubeObject) IndexAnnotation() int {
 	}
 	i, _ := strconv.Atoi(anno)
 	return i
+}
+
+func (o *KubeObject) SetIndexAnnotation(index int) error {
+	return o.SetAnnotation(kioutil.IndexAnnotation, strconv.Itoa(index))
 }
 
 // IDAnnotation return -1 if not found.
@@ -749,6 +753,14 @@ func (o *KubeObject) node() *internal.MapVariant {
 func rnodeToKubeObject(rn *yaml.RNode) *KubeObject {
 	mapVariant := internal.NewMap(rn.YNode())
 	return asKubeObject(mapVariant)
+}
+
+func NewKubeObjectFromMap(m map[string]interface{}) (*KubeObject, error) {
+	rn, err := yaml.FromMap(m)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't convert unstructured/JSON map to KubeObject: %w", err)
+	}
+	return rnodeToKubeObject(rn), nil
 }
 
 // NewKubeObjectFromResourceNode creates a KubeObject from the deep copy of a yaml.RNode
@@ -808,6 +820,33 @@ func (o *SubObject) HasField(key string) bool {
 func (o *SubObject) UpsertMap(k string) *SubObject {
 	m := o.obj.UpsertMap(k)
 	return &SubObject{obj: m, parentGVK: o.parentGVK, fieldpath: o.fieldpath + "." + k}
+}
+
+// Set ensures that the value of `o` (this object) is the same as `newValue“,
+// while keeps the formatting of the original object.
+func (o *SubObject) Set(newValue *SubObject) error {
+	o.obj.Set(newValue.obj)
+	return nil
+}
+
+// SetFromTypedObject ensures that the value of `o` (this object) is the same as `newValue“,
+// while keeps the formatting of the original object.
+// `newValue` must be of type struct or map[string]...
+func (o *SubObject) SetFromTypedObject(newValue any) error {
+	kind := reflect.ValueOf(newValue).Kind()
+	if kind == reflect.Ptr {
+		kind = reflect.TypeOf(newValue).Elem().Kind()
+	}
+	if kind != reflect.Struct && kind != reflect.Map {
+		return fmt.Errorf("expected struct or map, got %T", newValue)
+	}
+
+	newMap, err := internal.TypedObjectToMapVariant(newValue)
+	if err != nil {
+		return err
+	}
+	o.obj.Set(newMap)
+	return nil
 }
 
 // SetMap  accepts a single key `k`, and ensures that the value of `k` is the same as the map it received

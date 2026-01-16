@@ -24,10 +24,63 @@ import (
 	"strings"
 
 	kptfilev1 "github.com/kptdev/kpt/pkg/api/kptfile/v1"
+	"github.com/kptdev/krm-functions-sdk/go/fn/internal"
 	"sigs.k8s.io/kustomize/kyaml/kio"
 	"sigs.k8s.io/kustomize/kyaml/kio/kioutil"
 	"sigs.k8s.io/kustomize/kyaml/yaml"
 )
+
+// ParseKubeObjects parses input byte slice to multiple KubeObjects.
+func ParseKubeObjects(in []byte) ([]*KubeObject, error) {
+	doc, err := internal.ParseDoc(in)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse input bytes: %w", err)
+	}
+	objects, err := doc.Elements()
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract objects: %w", err)
+	}
+	var kubeObjects []*KubeObject
+	for _, obj := range objects {
+		kubeObjects = append(kubeObjects, asKubeObject(obj))
+	}
+	return kubeObjects, nil
+}
+
+// ParseKubeObject parses input byte slice to a single KubeObject.
+func ParseKubeObject(in []byte) (*KubeObject, error) {
+	objects, err := ParseKubeObjects(in)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(objects) != 1 {
+		return nil, fmt.Errorf("expected exactly one object, got %d", len(objects))
+	}
+	obj := objects[0]
+	return obj, nil
+}
+
+func ReadKubeObjectsFromDirectory(path string) (KubeObjects, error) {
+	reader := &kio.LocalPackageReader{
+		PackagePath:           path,
+		PackageFileName:       kptfilev1.KptFileName,
+		MatchFilesGlob:        MatchAllKRM,
+		IncludeSubpackages:    true,
+		ErrorIfNonResources:   false,
+		OmitReaderAnnotations: false,
+		PreserveSeqIndent:     true,
+	}
+	rnodes, err := reader.Read()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read KubeObjects from directory %q: %w", path, err)
+	}
+	kobjs := make([]*KubeObject, len(rnodes))
+	for i := range rnodes {
+		kobjs[i] = MoveToKubeObject(rnodes[i])
+	}
+	return kobjs, nil
+}
 
 func ReadKubeObjectsFromPackage(inputFiles map[string]string) (objs KubeObjects, extraFiles map[string]string, err error) {
 	extraFiles = make(map[string]string)
@@ -91,6 +144,7 @@ func WriteKubeObjectsToString(objs KubeObjects) (string, error) {
 		Writer: buf,
 		ClearAnnotations: []string{
 			kioutil.PathAnnotation,
+			kioutil.LegacyPathAnnotation, //nolint:staticcheck //SA1019
 		},
 	}
 
