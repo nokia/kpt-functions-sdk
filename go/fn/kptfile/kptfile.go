@@ -23,11 +23,6 @@ import (
 	"sigs.k8s.io/kustomize/kyaml/yaml"
 )
 
-const (
-	statusFieldName     = "status"
-	conditionsFieldName = "conditions"
-)
-
 var (
 	BoolToConditionStatus = map[bool]kptfileapi.ConditionStatus{
 		true:  kptfileapi.ConditionTrue,
@@ -86,7 +81,7 @@ func (kf *Kptfile) String() string {
 // Status returns with the Status field of the Kptfile as a SubObject
 // If the Status field doesn't exist, it is added.
 func (kf *Kptfile) Status() *fn.SubObject {
-	return kf.UpsertMap(statusFieldName)
+	return kf.UpsertMap("status")
 }
 
 // DecodeKptfile decodes a KptFile from a yaml string.
