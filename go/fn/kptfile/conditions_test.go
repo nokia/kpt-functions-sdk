@@ -40,7 +40,7 @@ metadata:
 )
 
 func newKptfileWithConditions(t *testing.T, conds ...kptfileapi.Condition) *Kptfile {
-	kf, err := NewFromPackage(map[string]string{kptfileapi.KptFileName: emptyKptfile})
+	kf, err := NewFromString(emptyKptfile)
 	require.NoError(t, err)
 
 	var objs fn.SliceSubObjects

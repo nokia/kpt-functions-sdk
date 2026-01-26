@@ -1,4 +1,4 @@
-// Copyright 2024-2025 The kpt and Nephio Authors
+// Copyright 2024-2025 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,6 +56,19 @@ func NewFromPackage(resources map[string]string) (*Kptfile, error) {
 		return nil, fmt.Errorf("couldn't parse file %q from package: %w", kptfileapi.KptFileName, err)
 	}
 	return NewFromKubeObjectList(kos)
+}
+
+func NewFromString(str string) (*Kptfile, error) {
+	ko, err := fn.ParseKubeObject([]byte(str))
+	if err != nil {
+		return nil, err
+	}
+
+	if ko.GroupVersionKind() != kptfileapi.KptFileGVK() {
+		return nil, fmt.Errorf("string is not Kptfile (GVK %q != %q)", kptfileapi.KptFileGVK(), ko.GroupVersionKind())
+	}
+
+	return &Kptfile{KubeObject: *ko}, nil
 }
 
 func (kf *Kptfile) WriteToPackage(resources map[string]string) error {
