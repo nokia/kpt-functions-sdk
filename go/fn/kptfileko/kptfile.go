@@ -1,4 +1,4 @@
-// Copyright 2024-2025 The kpt Authors
+// Copyright 2024-2026 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kptfile
+package kptfileko
 
 import (
 	"fmt"
@@ -30,22 +30,22 @@ var (
 	}
 )
 
-// Kptfile provides an API to manipulate the Kptfile of a kpt package
-type Kptfile struct {
+// KptfileKubeObject provides additional API to manipulate the Kptfile of a kpt package as a KubeObject
+type KptfileKubeObject struct {
 	fn.KubeObject
 }
 
-// NewFromKubeObjectList creates a Kptfile object by finding it in the given KubeObjects list
-func NewFromKubeObjectList(objs fn.KubeObjects) (*Kptfile, error) {
+// NewFromKubeObjectList creates a KptfileKubeObject by finding it in the given KubeObjects list
+func NewFromKubeObjectList(objs fn.KubeObjects) (*KptfileKubeObject, error) {
 	ko := objs.GetRootKptfile()
 	if ko == nil {
 		return nil, fmt.Errorf("the Kptfile object is missing from the package")
 	}
-	return &Kptfile{KubeObject: *ko}, nil
+	return &KptfileKubeObject{KubeObject: *ko}, nil
 }
 
-// NewFromPackage creates a Kptfile object from the resource (YAML) files of a package
-func NewFromPackage(resources map[string]string) (*Kptfile, error) {
+// NewFromPackage creates a KptfileKubeObject from the resource (YAML) files of a package
+func NewFromPackage(resources map[string]string) (*KptfileKubeObject, error) {
 	kptfileStr, found := resources[kptfileapi.KptFileName]
 	if !found {
 		return nil, fmt.Errorf("file %q is missing from the package", kptfileapi.KptFileName)
@@ -58,7 +58,7 @@ func NewFromPackage(resources map[string]string) (*Kptfile, error) {
 	return NewFromKubeObjectList(kos)
 }
 
-func NewFromString(str string) (*Kptfile, error) {
+func NewFromString(str string) (*KptfileKubeObject, error) {
 	ko, err := fn.ParseKubeObject([]byte(str))
 	if err != nil {
 		return nil, err
@@ -68,10 +68,10 @@ func NewFromString(str string) (*Kptfile, error) {
 		return nil, fmt.Errorf("string is not Kptfile (GVK %q != %q)", kptfileapi.KptFileGVK(), ko.GroupVersionKind())
 	}
 
-	return &Kptfile{KubeObject: *ko}, nil
+	return &KptfileKubeObject{KubeObject: *ko}, nil
 }
 
-func (kf *Kptfile) WriteToPackage(resources map[string]string) error {
+func (kf *KptfileKubeObject) WriteToPackage(resources map[string]string) error {
 	if kf == nil {
 		return fmt.Errorf("attempt to write empty Kptfile to the package")
 	}
@@ -83,7 +83,7 @@ func (kf *Kptfile) WriteToPackage(resources map[string]string) error {
 	return nil
 }
 
-func (kf *Kptfile) String() string {
+func (kf *KptfileKubeObject) String() string {
 	if kf == nil {
 		return ""
 	}
@@ -91,13 +91,13 @@ func (kf *Kptfile) String() string {
 	return kptfileStr
 }
 
-// Status returns with the Status field of the Kptfile as a SubObject
+// Status returns with the Status field of the KptfileKubeObject as a SubObject
 // If the Status field doesn't exist, it is added.
-func (kf *Kptfile) Status() *fn.SubObject {
+func (kf *KptfileKubeObject) Status() *fn.SubObject {
 	return kf.UpsertMap("status")
 }
 
-// DecodeKptfile decodes a KptFile from a yaml string.
+// DecodeKptfile decodes a KptFile from a YAML string.
 func DecodeKptfile(kf string) (*kptfileapi.KptFile, error) {
 	kptfile := &kptfileapi.KptFile{}
 	f := strings.NewReader(kf)

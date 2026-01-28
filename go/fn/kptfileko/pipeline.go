@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kptfile
+package kptfileko
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ import (
 // If the function already exists, it is updated. If it doesn't exist, it is added at the specified position.
 // If insertPosition is negative, the insert position is counted backwards from the end of the list
 // (i.e. -1 will append to the list).
-func (kf *Kptfile) UpsertMutatorFunctions(fns []kptfileapi.Function, insertPosition int) error {
+func (kf *KptfileKubeObject) UpsertMutatorFunctions(fns []kptfileapi.Function, insertPosition int) error {
 	return kf.UpsertPipelineFunctions(fns, "mutators", insertPosition)
 }
 
@@ -35,7 +35,7 @@ func (kf *Kptfile) UpsertMutatorFunctions(fns []kptfileapi.Function, insertPosit
 // If the function already exists, it is updated. If it doesn't exist, it is added at the specified position.
 // If insertPosition is negative, the insert position is counted backwards from the end of the list
 // (i.e. -1 will append to the list).
-func (kf *Kptfile) UpsertValidatorFunctions(fns []kptfileapi.Function, insertPosition int) error {
+func (kf *KptfileKubeObject) UpsertValidatorFunctions(fns []kptfileapi.Function, insertPosition int) error {
 	return kf.UpsertPipelineFunctions(fns, "validators", insertPosition)
 }
 
@@ -44,7 +44,7 @@ func (kf *Kptfile) UpsertValidatorFunctions(fns []kptfileapi.Function, insertPos
 // If the function already exists, it is updated. If it doesn't exist, it is added at the specified position.
 // If insertPosition is negative, the insert position is counted backwards from the end of the list
 // (i.e. -1 will append to the list).
-func (kf *Kptfile) UpsertPipelineFunctions(fns []kptfileapi.Function, fieldName string, insertPosition int) error {
+func (kf *KptfileKubeObject) UpsertPipelineFunctions(fns []kptfileapi.Function, fieldName string, insertPosition int) error {
 	if len(fns) == 0 {
 		return nil
 	}

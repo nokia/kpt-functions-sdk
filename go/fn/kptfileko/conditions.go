@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kptfile
+package kptfileko
 
 import (
 	"fmt"
@@ -51,16 +51,16 @@ func IsConditionType(expectedType string) SubObjectMatcher {
 	}
 }
 
-func (kf *Kptfile) Conditions() fn.SliceSubObjects {
+func (kf *KptfileKubeObject) Conditions() fn.SliceSubObjects {
 	ret, _, _ := kf.NestedSlice("status", "conditions")
 	return ret
 }
 
-func (kf *Kptfile) SetConditions(conditions fn.SliceSubObjects) error {
+func (kf *KptfileKubeObject) SetConditions(conditions fn.SliceSubObjects) error {
 	return kf.Status().SetSlice(conditions, "conditions")
 }
 
-func (kf *Kptfile) GetCondition(conditionType string) *fn.SubObject {
+func (kf *KptfileKubeObject) GetCondition(conditionType string) *fn.SubObject {
 	conditions := kf.Conditions()
 	i := slices.IndexFunc(conditions, IsType(conditionType))
 	if i < 0 {
@@ -71,7 +71,7 @@ func (kf *Kptfile) GetCondition(conditionType string) *fn.SubObject {
 
 // IsStatusConditionPresentAndEqual returns true when conditionType is present and equal to status.
 // Inspired by https://pkg.go.dev/k8s.io/apimachinery/pkg/api/meta#IsStatusConditionPresentAndEqual
-func (kf *Kptfile) IsStatusConditionPresentAndEqual(conditionType string, status kptfileapi.ConditionStatus) bool {
+func (kf *KptfileKubeObject) IsStatusConditionPresentAndEqual(conditionType string, status kptfileapi.ConditionStatus) bool {
 	conditions := kf.Conditions()
 	for _, cond := range conditions {
 		typeStr, _, _ := cond.NestedString("type")
@@ -85,19 +85,19 @@ func (kf *Kptfile) IsStatusConditionPresentAndEqual(conditionType string, status
 
 // IsStatusConditionTrue returns true when the conditionType is present and set to kptfileapi.ConditionTrue
 // Inspired by https://pkg.go.dev/k8s.io/apimachinery/pkg/api/meta#IsStatusConditionTrue
-func (kf *Kptfile) IsStatusConditionTrue(conditionType string) bool {
+func (kf *KptfileKubeObject) IsStatusConditionTrue(conditionType string) bool {
 	return kf.IsStatusConditionPresentAndEqual(conditionType, kptfileapi.ConditionTrue)
 }
 
 // IsStatusConditionFalse returns true when the conditionType is present and set to kptfileapi.ConditionFalse
 // Inspired by https://pkg.go.dev/k8s.io/apimachinery/pkg/api/meta#IsStatusConditionFalse
-func (kf *Kptfile) IsStatusConditionFalse(conditionType string) bool {
+func (kf *KptfileKubeObject) IsStatusConditionFalse(conditionType string) bool {
 	return kf.IsStatusConditionPresentAndEqual(conditionType, kptfileapi.ConditionFalse)
 }
 
 // GetTypedCondition returns with the condition whose type is `conditionType` as its first return value,
 // or nil if the condition is missing.
-func (kf *Kptfile) GetTypedCondition(conditionType string) (kptfileapi.Condition, error) {
+func (kf *KptfileKubeObject) GetTypedCondition(conditionType string) (kptfileapi.Condition, error) {
 	cObj := kf.GetCondition(conditionType)
 	if cObj == nil {
 		return kptfileapi.Condition{}, nil
@@ -112,7 +112,7 @@ func (kf *Kptfile) GetTypedCondition(conditionType string) (kptfileapi.Condition
 }
 
 // SetTypedCondition creates or updates the given condition using the Type field as the primary key
-func (kf *Kptfile) SetTypedCondition(condition kptfileapi.Condition) error {
+func (kf *KptfileKubeObject) SetTypedCondition(condition kptfileapi.Condition) error {
 	conditions := kf.Conditions()
 	i := slices.IndexFunc(conditions, IsType(condition.Type))
 	if i >= 0 {
@@ -140,9 +140,9 @@ func (kf *Kptfile) SetTypedCondition(condition kptfileapi.Condition) error {
 	return kf.SetConditions(conditions)
 }
 
-// ApplyDefaultCondition adds the given condition to the Kptfile if a condition
+// ApplyDefaultCondition adds the given condition to the KptfileKubeObject if a condition
 // with the same type doesn't exist yet.
-func (kf *Kptfile) ApplyDefaultCondition(condition kptfileapi.Condition) error {
+func (kf *KptfileKubeObject) ApplyDefaultCondition(condition kptfileapi.Condition) error {
 	conditions := kf.Conditions()
 	// if condition exists, do nothing
 	if slices.ContainsFunc(conditions, IsType(condition.Type)) {
@@ -159,7 +159,7 @@ func (kf *Kptfile) ApplyDefaultCondition(condition kptfileapi.Condition) error {
 }
 
 // DeleteConditionByType deletes all conditions with the given type
-func (kf *Kptfile) DeleteConditionByType(conditionType string) error {
+func (kf *KptfileKubeObject) DeleteConditionByType(conditionType string) error {
 	conditions := kf.Conditions()
 	if conditions == nil {
 		return nil
@@ -168,17 +168,17 @@ func (kf *Kptfile) DeleteConditionByType(conditionType string) error {
 	return kf.SetConditions(conditions)
 }
 
-func (kf *Kptfile) ReadinessGates() fn.SliceSubObjects {
+func (kf *KptfileKubeObject) ReadinessGates() fn.SliceSubObjects {
 	ret, _, _ := kf.NestedSlice("info", "readinessGates")
 	return ret
 }
 
-func (kf *Kptfile) SetReadinessGates(gates fn.SliceSubObjects) error {
+func (kf *KptfileKubeObject) SetReadinessGates(gates fn.SliceSubObjects) error {
 	return kf.UpsertMap("info").SetSlice(gates, "readinessGates")
 }
 
-// EnsureReadinessGates ensures that the given readiness gates are present in the Kptfile.
-func (kf *Kptfile) EnsureReadinessGates(gates []kptfileapi.ReadinessGate) error {
+// EnsureReadinessGates ensures that the given readiness gates are present in the KptfileKubeObject.
+func (kf *KptfileKubeObject) EnsureReadinessGates(gates []kptfileapi.ReadinessGate) error {
 	if len(gates) == 0 {
 		return nil
 	}

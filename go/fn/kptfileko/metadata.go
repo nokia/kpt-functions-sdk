@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kptfile
+package kptfileko
 
 // SetLabels sets the labels in the Kptfile
-func (kf *Kptfile) SetLabels(labels map[string]string) {
+func (kf *KptfileKubeObject) SetLabels(labels map[string]string) {
 	for k, v := range labels {
 		_ = kf.SetLabel(k, v)
 	}
@@ -29,7 +29,7 @@ func (kf *Kptfile) SetLabels(labels map[string]string) {
 }
 
 // SetAnnotations sets the annotations in the Kptfile
-func (kf *Kptfile) SetAnnotations(annotations map[string]string) {
+func (kf *KptfileKubeObject) SetAnnotations(annotations map[string]string) {
 	for k, v := range annotations {
 		_ = kf.SetAnnotation(k, v)
 	}

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kptfile
+package kptfileko
 
 import (
 	"testing"
@@ -33,7 +33,7 @@ const (
 	message = "Message"
 )
 
-func newKptfileWithConditions(t *testing.T, conds ...kptfileapi.Condition) *Kptfile {
+func newKptfileWithConditions(t *testing.T, conds ...kptfileapi.Condition) *KptfileKubeObject {
 	kf := newEmptyKptfile(t)
 
 	var objs fn.SliceSubObjects

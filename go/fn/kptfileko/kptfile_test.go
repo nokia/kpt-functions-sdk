@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kptfile
+package kptfileko
 
 import (
 	"strings"
@@ -23,7 +23,7 @@ import (
 	"gotest.tools/assert"
 )
 
-func newEmptyKptfile(t *testing.T) *Kptfile {
+func newEmptyKptfile(t *testing.T) *KptfileKubeObject {
 	const emptyKptfile = `
 apiVersion: kpt.dev/v1
 kind: Kptfile
