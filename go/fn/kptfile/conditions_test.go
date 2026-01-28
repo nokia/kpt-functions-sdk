@@ -29,19 +29,12 @@ const (
 	ConditionTypeRendered       = "Rendered"
 	ConditionTypeRenderFinished = "RenderFinished"
 
-	emptyKptfile = `
-apiVersion: kpt.dev/v1
-kind: Kptfile
-metadata:
-  name: test
-`
 	reason  = "Reason"
 	message = "Message"
 )
 
 func newKptfileWithConditions(t *testing.T, conds ...kptfileapi.Condition) *Kptfile {
-	kf, err := NewFromString(emptyKptfile)
-	require.NoError(t, err)
+	kf := newEmptyKptfile(t)
 
 	var objs fn.SliceSubObjects
 	for _, c := range conds {
@@ -81,7 +74,7 @@ func TestIsConditionType(t *testing.T) {
 }
 
 func TestSetConditions(t *testing.T) {
-	kf := newKptfileWithConditions(t)
+	kf := newEmptyKptfile(t)
 	conds := []kptfileapi.Condition{
 		{Type: ConditionTypeReady, Status: kptfileapi.ConditionTrue},
 		{Type: ConditionTypeRendered, Status: kptfileapi.ConditionFalse},
@@ -171,7 +164,7 @@ func TestGetTypedCondition(t *testing.T) {
 }
 
 func TestSetTypedCondition(t *testing.T) {
-	kf := newKptfileWithConditions(t)
+	kf := newEmptyKptfile(t)
 
 	t.Run("Add", func(t *testing.T) {
 		cond := kptfileapi.Condition{Type: ConditionTypeReady, Status: kptfileapi.ConditionTrue, Reason: reason, Message: message}
@@ -246,7 +239,7 @@ func TestDeleteConditionByType(t *testing.T) {
 }
 
 func TestReadinessGates(t *testing.T) {
-	kf := newKptfileWithConditions(t)
+	kf := newEmptyKptfile(t)
 	gates := []kptfileapi.ReadinessGate{
 		{ConditionType: ConditionTypeRendered},
 		{ConditionType: ConditionTypeRenderFinished},
@@ -266,7 +259,7 @@ func TestReadinessGates(t *testing.T) {
 }
 
 func TestEnsureReadinessGates(t *testing.T) {
-	kf := newKptfileWithConditions(t)
+	kf := newEmptyKptfile(t)
 
 	t.Run("Add", func(t *testing.T) {
 		err := kf.EnsureReadinessGates([]kptfileapi.ReadinessGate{{ConditionType: ConditionTypeRendered}})

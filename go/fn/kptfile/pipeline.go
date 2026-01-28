@@ -137,7 +137,7 @@ func findFunctionByContent(haystack fn.SliceSubObjects, needle *kptfileapi.Funct
 		}
 		// ignore diff in name
 		krmFn.Name = needle.Name
-		if reflect.DeepEqual(krmFn, needle) {
+		if reflect.DeepEqual(krmFn, *needle) {
 			return fnObj, nil
 		}
 	}

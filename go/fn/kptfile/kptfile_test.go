@@ -19,8 +19,21 @@ import (
 	"testing"
 
 	kptfileapi "github.com/kptdev/kpt/pkg/api/kptfile/v1"
+	"github.com/stretchr/testify/require"
 	"gotest.tools/assert"
 )
+
+func newEmptyKptfile(t *testing.T) *Kptfile {
+	const emptyKptfile = `
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: test
+`
+	kf, err := NewFromString(emptyKptfile)
+	require.NoError(t, err)
+	return kf
+}
 
 func TestAddCondition(t *testing.T) {
 	testcases := []struct {
