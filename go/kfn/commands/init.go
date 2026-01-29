@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	DefaultFnPkg   = "https://github.com/kptdev/krm-functions-sdk.git/go/get-started@master"
+	DefaultFnPkg   = "https://github.com/kptdev/krm-functions-sdk.git/go/get-started@main"
 	DefaultPkgName = "function"
 )
 
