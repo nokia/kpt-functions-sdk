@@ -1,4 +1,4 @@
-// Copyright 2024 The kpt and Nephio Authors
+// Copyright 2024 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package fn
+package kptfileko
 
 import (
 	"strings"
 	"testing"
 
 	kptfileapi "github.com/kptdev/kpt/pkg/api/kptfile/v1"
+	"github.com/stretchr/testify/require"
 	"gotest.tools/assert"
 )
+
+func newEmptyKptfile(t *testing.T) *KptfileKubeObject {
+	const emptyKptfile = `
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: test
+`
+	kf, err := NewFromString(emptyKptfile)
+	require.NoError(t, err)
+	return kf
+}
 
 func TestAddCondition(t *testing.T) {
 	testcases := []struct {
@@ -267,7 +280,7 @@ status: {conditions: [{type: test, status: "True", message: Everything is awesom
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			kptfile, err := NewKptfileFromPackage(tc.resources)
+			kptfile, err := NewFromPackage(tc.resources)
 			assert.NilError(t, err, "failed to parse Kptfile")
 
 			err = kptfile.SetTypedCondition(tc.cond)
@@ -277,8 +290,8 @@ status: {conditions: [{type: test, status: "True", message: Everything is awesom
 			assert.NilError(t, err, "failed to write conditions back to Kptfile")
 			assert.Equal(t, strings.TrimSpace(tc.expectedKptfile), strings.TrimSpace(tc.resources["Kptfile"]))
 
-			gotCond, found := kptfile.GetTypedCondition("test")
-			assert.Equal(t, true, found, "condition not found")
+			gotCond, err := kptfile.GetTypedCondition("test")
+			assert.NilError(t, err, "condition not found")
 			assert.Equal(t, tc.cond, gotCond, "condition retrieved does not match the expected condition")
 		})
 	}

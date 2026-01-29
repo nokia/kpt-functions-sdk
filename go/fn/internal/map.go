@@ -104,7 +104,7 @@ func (o *MapVariant) getVariant(key string) (variant, bool) {
 	return v, true
 }
 
-func (o *MapVariant) set(key string, val variant) {
+func (o *MapVariant) setField(key string, val variant) {
 	newNode := val.Node()
 	i := findMapKey(o.node, key)
 	if i >= 0 {
@@ -117,12 +117,18 @@ func (o *MapVariant) set(key string, val variant) {
 	}
 }
 
-func (o *MapVariant) remove(key string) (bool, error) {
+func (o *MapVariant) Set(newValue *MapVariant) {
+	newNode := newValue.Node()
+	deepCopyFormatting(o.node, newNode)
+	o.node.Content = newNode.Content
+}
+
+func (o *MapVariant) remove(key string) bool {
 	removed := false
 
 	children := o.node.Content
 	if len(children)%2 != 0 {
-		return false, fmt.Errorf("unexpected number of children for map %d", len(children))
+		log.Fatalf("couldn't remove field %q from map node: unexpected odd number of children (%d)", key, len(children))
 	}
 
 	var keep []*yaml.Node
@@ -140,7 +146,7 @@ func (o *MapVariant) remove(key string) (bool, error) {
 
 	o.node.Content = keep
 
-	return removed, nil
+	return removed
 }
 
 // remove field metadata.creationTimestamp when it's null.
@@ -255,17 +261,11 @@ func (o *MapVariant) UpsertMap(field string) *MapVariant {
 			}
 			// if the map is empty, replace it with a new map
 			// this supposed to result in better formatting if the map value is specified as {}
-			_, err := o.remove(field)
-			if err != nil {
-				klog.Warningf("upsert: couldn't remove field %s: %v", field, err)
-			}
+			_ = o.remove(field)
 
 		default:
 			// field was found and it is NOT a map
-			_, err := o.remove(field)
-			if err != nil {
-				log.Fatalf("KubeObject.UpsertMap(): couldn't remove mistyped field %s: %v", field, err)
-			}
+			_ = o.remove(field)
 		}
 	}
 

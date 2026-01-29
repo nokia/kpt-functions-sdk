@@ -19,7 +19,7 @@ import (
 	"math"
 	"strings"
 
-	v1 "github.com/kptdev/kpt/pkg/api/kptfile/v1"
+	kptfileapi "github.com/kptdev/kpt/pkg/api/kptfile/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/kustomize/kyaml/kio"
 	"sigs.k8s.io/kustomize/kyaml/yaml"
@@ -160,14 +160,14 @@ func IsGroupKind(gk schema.GroupKind) func(*KubeObject) bool {
 
 // GetRootKptfile returns the root Kptfile. Nested kpt packages can have multiple Kptfile files of the same GVKNN.
 func (kos KubeObjects) GetRootKptfile() *KubeObject {
-	kptfiles := kos.Where(IsGroupVersionKind(v1.KptFileGVK()))
+	kptfiles := kos.Where(IsGroupVersionKind(kptfileapi.KptFileGVK()))
 	if len(kptfiles) == 0 {
 		return nil
 	}
 	minDepths := math.MaxInt32
 	var rootKptfile *KubeObject
 	for _, kf := range kptfiles {
-		path := kf.GetAnnotation(PathAnnotation)
+		path := kf.PathAnnotation()
 		depths := len(strings.Split(path, "/"))
 		if depths <= minDepths {
 			minDepths = depths

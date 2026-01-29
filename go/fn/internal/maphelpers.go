@@ -1,4 +1,4 @@
-// Copyright 2022 The kpt Authors
+// Copyright 2022,2025 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ func (o *MapVariant) SetNestedValue(val variant, fields ...string) error {
 	var err error
 	for i := 0; i < n; i++ {
 		if i == n-1 {
-			current.set(fields[i], val)
+			current.setField(fields[i], val)
 		} else {
 			current, _, err = current.getMap(fields[i], true)
 			if err != nil {
@@ -206,13 +206,13 @@ func (o *MapVariant) RemoveNestedField(fields ...string) (bool, error) {
 		}
 
 		if i == n-1 {
-			return current.remove(fields[i])
+			return current.remove(fields[i]), nil
 		}
 		switch entry := entry.(type) {
 		case *MapVariant:
 			current = entry
 		default:
-			return false, fmt.Errorf("value is of unexpected type %T", entry)
+			return false, fmt.Errorf("removeNestedField: value is expected to be map, but is of unexpected type %T", entry)
 		}
 	}
 	return false, fmt.Errorf("unexpected code reached")
